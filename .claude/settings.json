@@ -1,0 +1,62 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "name": "session-start-status",
+        "description": "Display project health and status at session start",
+        "trigger": "first_prompt_only",
+        "mode": "prompt",
+        "prompt": "Provide a quick project status overview:\n\n1. Git status (branch, uncommitted changes)\n2. Docker containers status (if backend is running)\n3. Recent errors in logs (if any)\n4. Quick health check summary\n\nBe concise (3-5 lines max). Only show if relevant to current work."
+      }
+    ],
+    "PostToolUse": [
+      {
+        "name": "auto-lint-javascript",
+        "description": "Run ESLint on edited JavaScript/JSX files",
+        "trigger": {
+          "tool": "Edit",
+          "file_pattern": "frontend/**/*.{js,jsx}"
+        },
+        "mode": "command",
+        "command": "cd frontend && npm run lint --fix {{file_path}} 2>&1 || true"
+      },
+      {
+        "name": "auto-format-check",
+        "description": "Remind to check formatting after multiple edits",
+        "trigger": {
+          "tool": "Edit",
+          "count": 5,
+          "within_minutes": 10
+        },
+        "mode": "prompt",
+        "prompt": "You've made several edits recently. Consider running code formatting:\n- Frontend: npm run lint:fix\n- Check for any console warnings\n\nOnly mention this if you haven't already suggested it."
+      },
+      {
+        "name": "git-status-reminder",
+        "description": "Remind to check git status after significant file creation",
+        "trigger": {
+          "tool": "Write",
+          "count": 5,
+          "within_minutes": 15
+        },
+        "mode": "prompt",
+        "prompt": "You've created several new files. Consider checking git status to ensure they're tracked:\n  git status\n\nOnly mention if relevant and not already discussed."
+      }
+    ]
+  },
+  "project": {
+    "name": "Tenni Tennis Portal",
+    "description": "Composable web architecture for tennis court reservations and lesson scheduling",
+    "primaryLanguages": ["JavaScript", "SQL"],
+    "frameworks": ["React", "Directus", "Docker"],
+    "lintOnSave": true,
+    "autoFormat": false
+  },
+  "preferences": {
+    "codeStyle": "airbnb-base",
+    "quoteStyle": "single",
+    "indentation": 2,
+    "maxLineLength": 100,
+    "trailingComma": true
+  }
+}
