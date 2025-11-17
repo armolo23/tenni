@@ -17,6 +17,46 @@ This document provides a detailed, phase-by-phase implementation plan for the Te
 
 ---
 
+## ⚠️ Important: Specification Analysis Updates
+
+**Before beginning implementation**, review the [Specification Analysis & Improvements](./spec-analysis-and-improvements.md) document, which identifies critical architectural enhancements discovered during spec review:
+
+### Critical Updates (Implement before Phase 2)
+
+1. **Database Indexes** - Added comprehensive index specifications for performance
+   - Junction table indexes for M2M filtering
+   - Composite indexes for common query patterns
+   - Unique index on `bookings.cal_uid` for webhook deduplication
+
+2. **Cal.com API Version** - Confirmed v2 payload structure
+   - Webhook payload uses `attendees[0]` (array notation)
+   - Different structure than v1 (document dependency)
+
+3. **Guest User Handling** - Enhanced webhook Flow
+   - Auto-create guest users for unregistered bookings
+   - Admin notification on guest booking
+   - Prevent booking data loss
+
+### Important Additions (Phase 2-3)
+
+4. **Membership Tier Logic** - Client-side enforcement
+   - Standard: 7 days ahead
+   - Gold: 14 days ahead
+   - Platinum: 30 days ahead
+
+5. **user_progress Collection** - Design for Phase 3/4
+   - Track video completion and progress
+   - Enable resume functionality
+   - User ratings and notes
+
+6. **Email Verification** - Production security
+   - Enable for production deployment
+   - Optional for development
+
+See full analysis for implementation details, SQL migrations, and code examples.
+
+---
+
 ## Phase 1: Foundation & Identity
 
 **Duration**: 1 week (5 working days)
@@ -121,16 +161,36 @@ This document provides a detailed, phase-by-phase implementation plan for the Te
   - Configure relationships with proper on-delete behavior
 - [ ] Create schema snapshot
 - [ ] Verify all collections in Data Model UI
+- [ ] **NEW: Create database indexes** (see spec-analysis document):
+  ```sql
+  -- Run via: docker-compose exec postgres psql -U directus -d tenni -f /path/to/indexes.sql
+
+  -- M2M Junction indexes
+  CREATE INDEX idx_media_items_tags_media_item_id ON media_items_tags(media_item_id);
+  CREATE INDEX idx_media_items_tags_tags_id ON media_items_tags(tags_id);
+
+  -- Bookings indexes
+  CREATE INDEX idx_bookings_user_id ON bookings(user_id);
+  CREATE INDEX idx_bookings_start_time ON bookings(start_time);
+  CREATE INDEX idx_bookings_user_time ON bookings(user_id, start_time);
+  CREATE UNIQUE INDEX idx_bookings_cal_uid ON bookings(cal_uid);
+
+  -- Media items indexes
+  CREATE INDEX idx_media_items_difficulty_status ON media_items(difficulty_level, status);
+  ```
+- [ ] Verify indexes created: `\di` in psql
 
 **Success Criteria**:
 - ✅ All collections created with correct field types
 - ✅ Relationships configured properly
 - ✅ Unique constraints working
 - ✅ Schema snapshot created
+- ✅ **Database indexes created and verified**
 
 **Deliverables**:
 - Complete data model (5 collections + system extensions)
 - Schema snapshot with full schema
+- **Performance-optimized database with indexes**
 
 **Reference**: Use `/schema-designer` subagent for assistance
 
