@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Frontend (React/Vite)
+frontend/.vite/
+frontend/dist/
+frontend/coverage/
+
+# Backend (Directus)
+backend/uploads/
+backend/extensions/node_modules/
+backend/database.db
+
+# PostgreSQL
+*.sql
+*.dump
+
+# Docker
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Backups
+*.backup
+backend/backups/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Claude Code (keep automation, ignore cache)
+.claude/cache/

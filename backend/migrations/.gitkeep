@@ -1,0 +1,2 @@
+# Database Schema Snapshots
+# Create snapshots with: npx directus schema snapshot ./migrations/schema-snapshot.yaml
