@@ -24,6 +24,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "react-hook-form": "^7.52.0",
+    "@hookform/resolvers": "^3.9.0",
     "zod": "^3.23.8",
     "date-fns": "^3.6.0"
   },
